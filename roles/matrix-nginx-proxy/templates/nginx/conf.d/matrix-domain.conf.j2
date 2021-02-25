@@ -45,8 +45,16 @@
 			proxy_pass http://{{ matrix_nginx_proxy_proxy_matrix_corporal_api_addr_sans_container }};
 		{% endif %}
 
+		client_max_body_size 20M;
 		proxy_set_header Host $host;
 		proxy_set_header X-Forwarded-For $remote_addr;
+	}
+	{% endif %}
+
+	{% if matrix_nginx_proxy_proxy_matrix_push_gateway_api_enabled %}
+	location ^~ /_matrix/push {
+		rewrite (.*) /journey-builders/JourneyAPI/1.1.0$1 break;
+		proxy_pass {{ matrix_nginx_proxy_proxy_matrix_push_gateway_api_endpoint }};
 	}
 	{% endif %}
 
